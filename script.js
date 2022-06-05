@@ -1,71 +1,111 @@
-const containerDiv = document.querySelector(#container);
+const defaultColor = '#333333';
+const defaultSize = 16;
+const defaultMode = 'color';
 
-function makeGrid(row, columns) {
+let currentColor = defaultColor;
+let currentSize = defaultSize;
+let currentMode = defaultMode;
 
-    while (document.querySelector("button") !== null) {
-        document.querySelector("button").remove();
+function setCurrentColor(newColor) {
+    currentColor = newColor
+}
+
+function setCurrentMode(newMode) {
+    activateButton(newMode)
+    currentMode = newMode
+}
+
+function setCurrentSize(newSize) {
+    currentSize = newSize
+}
+
+const colorPicker = document.getElementById('colorPicker');
+const colorBtn = document.getElementById('colorBtn');
+const rainbowBtn = document.getElementById('rainbowBtn');
+const eraserBtn = document.getElementById('eraserBtn');
+const clearBtn = document.getElementById('clearBtn');
+const sizeValue = document.getElementById('sizeValue');
+const sizeSlider = document.getElementById('sizeSlider');
+const grid = document.getElementById('grid');
+
+colorPicker.oninput = (e) => setCurrentColor(e.target.value);
+colorBtn.onclick = () => setCurrentMode('color');
+rainbowBtn.onclick = () => setCurrentMode('rainbow');
+eraserBtn.onclick = () => setCurrentMode('eraser');
+clearBtn.onclick = () => reloadGrid();
+sizeSlider.onmousemove = (e) => updateSizeValue(e.target.value);
+sizeSlider.onchange = (e) => changeSize(e.target.value)
+
+let mouseDown = false;
+document.body.onmousedown = () => (mouseDown = true)
+document.body.onmouseup = () => (mouseDown = false)
+
+function changeSize(value) {
+    setCurrentSize(value)
+    updateSizeValue(value)
+    reloadGrid()
+}
+  
+function updateSizeValue(value) {
+    sizeValue.innerHTML = `${value} x ${value}`
+}
+  
+function reloadGrid() {
+    clearGrid()
+    setupGrid(currentSize)
+}
+  
+function clearGrid() {
+    grid.innerHTML = ''
+}
+
+function setupGrid(size){
+    grid.style.gridTemplateColumns = 'repeat(${size}, 1fr)';
+    grid.style.gridTemplateRows = 'repeat(${size}, 1fr)';
+
+    for (let i=0; i < size * size; i++) {
+        const gridElement = document.createElement('div');
+        gridElement.classList.add('grid-element');
+        gridElement.addEventListener('mouseover', changeColor);
+        gridElement.addEventListener('mousedown', changeColor);
+        grid.appendChild(gridElement);
     }
-    //creating the grid
-    containerDiv.style.setProperty("--grid-rows", row);
-    containerDiv.style.setProperty("--grid-columns", columns);
-    containerDiv.style.width = "960px";
-    containerDiv.style.overflow = "hidden";
-    for (i = 0; i <(rows * columns); i++) {
-        let square = document.createElement("div");
-        square.style.minHeight = "0";
-        square.style.minWidth = "0";
-        square.style.overflow = "hidden";
-        containerDiv.appendChild(square).className =  "grid-item";
+}
 
-        //add event listener to listen for background color presence
-        square.addEventListener("mouseover", () => {
-
-            //run check to see if background color is present, if NOT apply random color, apply 10% opacity
-            if (square.style.backgroundColor === "") {
-                let color = getRandomColor();
-                square.style.backgroundColor = color;
-                square.style.opacity = "0.1";
-                return square.style.backgroundColor;
-            }
-            // apply additional opacity at 10% if background color is present
-            if ((square.style.backgroundColor !== "") && (square.style <= opacity <= "0.9" )) {
-                square.style.opacity = parseFloat(square.style.opacity) + 0.10;
-                return square.style.backgroundColor;    
-            }
-        })
+function changeColor(e){
+    if (e.type === 'mouseover' && !mouseDown) return
+    if (currentMode === 'rainbow') {
+        const randomRed = Math.floor(Math.random() * 256);
+        const randomGreen = Math.floor(Math.random() * 256);
+        const randomBlue = Math.floor(Math.random() * 256);
+        e.target.style.backgroundColor = `rgb(${randomRed}, ${randomGreen}, ${randomBlue})`;
+    } else if (currentMode === 'color') {
+        e.target.style.backgroundColor = currentColor;
+    } else if (currentMode === 'eraser') {
+        e.target.style.backgroundColor = 'white';
     }
-    createButton();
-    //fillSquares();
 }
 
-function createButton() {
-    const buttonDiv = document.querySelector("#buttonDiv");
-    const resetButton = document.createElement("button");
-    resetButton.textContent = "Reset Grid!";
-    resetButton.style.margin = "20px";
-    //buttonDiv.style.textAlign = "center";
-    buttonDiv.appendChild(resetButton);
+function activateButton(newMode) {
+    if (currentMode === 'rainbow') {
+        rainbowBtn.classList.remove('active');
+    } else if (currentMode === 'color') {
+        colorBtn.classList.remove('active');
+    } else if (currentMode === 'eraser') {
+        eraserBtn.classList.remove('active');
+    }
 
-    //add event listen to button and prompt user for grid size / throw error > 100
-    resetButton.addEventListener("click", () => {
-        document.querySelectorAll(".grid-item").forEach(e => e.remove());
-        let userGridInput = prompt("Please enter a number for the grid size(Max: 100): ");
-        if (userGridInput > 100) {
-            alert("Please enter a number less than 100");
-            return;
-        }
-        rows = userGridInput
-        columns = userGridInput;
-        makeGrid(rows, columns);
-    })
+    if (newMode === 'rainbow') {
+        rainbowBtn.classList.add('active');
+    } else if (newMode === 'color') {
+        colorBtn.classList.add('active');
+    }
+    else if (newMode === 'eraser') {
+        eraserBtn.classList.add('active');
+    }
 }
 
-function getRandomColor() {
-    let o = Math.round;
-    let r = Math.random;
-    let s = 255;
-    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+window.onload = () => {
+    setupGrid(currentSize);
+    activateButton(currentMode);
 }
-
-// make initial call on page load as per project requirements
-makeGrid(16, 16);
