@@ -10,8 +10,9 @@
   background-size: cover;
 }
 .board {
-  width: 80%;
-  height: 80%;
+  margin: 4rem auto;
+  width: 25vw;
+  height: 90%;
   display: grid;
   background-color: white;
   box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.1), 0 0 0 2px rgb(255, 255, 255),
@@ -152,6 +153,7 @@ input {
 .mode {
   margin-bottom: 5px;
   color: white;
+  font-family: 'Secular One', sans-serif;
 }
 .error {
   display: none;

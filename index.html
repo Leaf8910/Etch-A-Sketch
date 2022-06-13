@@ -9,10 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
     <title>Etch-A-Sketch</title>
-    <!-- <style>
+    <style>
       .spacer {
         aspect-ratio: 900/600;
-        width: 100%;
+        width: 100vw;
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
@@ -22,15 +22,16 @@
         background-image: url('./layered-waves-haikei.svg');
       }
 
-    </style> -->
+    </style>
   </head>
   <body>
     <div class="flex-container">
       <div class="title"><h1>SketchPad</h1></div>
       <div class="mode">Mode: Coloring</div>
-      <!-- <div class="spacer layered-waves-haikei"></div> -->
       <div class="content">
+        <div class="spacer layered-waves-haikei">
         <div class="board"></div>
+      </div>
         <div class="buttons">
           <button class="blackButton" onclick="changeColor('black')">Black</button>
           <button class="eraserButton" onclick="changeColor('white')">Eraser</button>
